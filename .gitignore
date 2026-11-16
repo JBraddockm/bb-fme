@@ -1,0 +1,17 @@
+# Build output
+/build/
+/arm/
+/arm-p/
+/x86/
+*.o
+*.obj
+moc_*.cpp
+.moc/
+.obj/
+.settings
+
+# Compiled translations (generated from the .ts sources)
+*.qm
+
+# macOS
+.DS_Store
