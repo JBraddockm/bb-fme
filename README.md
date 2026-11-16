@@ -124,6 +124,12 @@ Code: `src/WebDavProvider.cpp`.
 
 ## Test servers on the host
 
+Both servers listen for incoming connections from the device, so the host firewall must allow them.
+Make sure `python3` is permitted to accept incoming connections — on macOS, System Settings → Network →
+Firewall will prompt the first time (click *Allow*), or add `python3` under *Options…*; on Linux, open
+the chosen port (e.g. `sudo ufw allow 8080/tcp`). Without this, the device's requests never reach the
+server and the source shows empty/offline.
+
 ### On device — a basic HTTP server
 
 ```sh
