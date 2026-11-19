@@ -59,11 +59,13 @@ Page {
 
     function doRegisterWebdav() {
         statusLabel.text = "Working…";
-        var r = _app.registerWebdav(davHost.text, parseInt(davPort.text), davUser.text, davPass.text);
+        var scheme = davHttps.checked ? "https" : "http";
+        var r = _app.registerWebdav(davHost.text, parseInt(davPort.text),
+                                    davUser.text, davPass.text, davHttps.checked);
         statusLabel.text = r;
         // The resmgr publishes the source asynchronously after the poke; show the
         // card optimistically (confirm in the File Manager).
-        page.davUrlShown = "http://" + davHost.text + ":" + davPort.text;
+        page.davUrlShown = scheme + "://" + davHost.text + ":" + davPort.text;
         page.davUserShown = davUser.text;
         page.davRegistered = true;
     }
@@ -84,7 +86,9 @@ Page {
             page.localRegistered = true;
         }
         if (_app.webdavIsRegistered()) {
-            page.davUrlShown = "http://" + _app.webdavSavedHost() + ":" + _app.webdavSavedPort();
+            davHttps.checked = _app.webdavSavedSecure();
+            page.davUrlShown = (_app.webdavSavedSecure() ? "https" : "http")
+                + "://" + _app.webdavSavedHost() + ":" + _app.webdavSavedPort();
             page.davUserShown = _app.webdavSavedUser();
             page.davRegistered = true;
         }
@@ -202,7 +206,26 @@ Page {
                 TextField { id: davUser; text: "webdav"; inputMode: TextFieldInputMode.Text; bottomMargin: 10 }
 
                 Label { text: "Password"; textStyle.fontSize: FontSize.Medium; textStyle.color: Color.White; topMargin: 5; bottomMargin: 5 }
-                TextField { id: davPass; text: "webdav"; inputMode: TextFieldInputMode.Password; bottomMargin: 15 }
+                TextField { id: davPass; text: "webdav"; inputMode: TextFieldInputMode.Password; bottomMargin: 10 }
+
+                Container {
+                    horizontalAlignment: HorizontalAlignment.Fill
+                    layout: StackLayout { orientation: LayoutOrientation.LeftToRight }
+                    Label {
+                        text: "Use HTTPS (TLS)"
+                        textStyle.fontSize: FontSize.Medium; textStyle.color: Color.White
+                        verticalAlignment: VerticalAlignment.Center
+                        layoutProperties: StackLayoutProperties { spaceQuota: 1 }
+                    }
+                    ToggleButton { id: davHttps; checked: false; verticalAlignment: VerticalAlignment.Center }
+                }
+                Label {
+                    text: "HTTPS needs the device to trust the server's certificate "
+                        + "(import a self-signed cert via Settings). Use the TLS port (e.g. 8443)."
+                    multiline: true
+                    textStyle.fontSize: FontSize.XSmall; textStyle.color: Color.LightGray
+                    topMargin: 4; bottomMargin: 15
+                }
 
                 Button {
                     text: "Register"

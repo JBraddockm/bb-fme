@@ -57,9 +57,9 @@ QString ApplicationUI::localSavedHost() const { return m_local->savedHost(); }
 QString ApplicationUI::localSavedPort() const { return m_local->savedPort(); }
 
 QString ApplicationUI::registerWebdav(const QString &host, int port,
-                                      const QString &user, const QString &pass)
+                                      const QString &user, const QString &pass, bool secure)
 {
-    return m_webdav->registerSource(host, port, user, pass);
+    return m_webdav->registerSource(host, port, user, pass, secure);
 }
 
 QString ApplicationUI::unregisterWebdav()
@@ -71,6 +71,7 @@ bool ApplicationUI::webdavIsRegistered() const { return m_webdav->isRegistered()
 QString ApplicationUI::webdavSavedHost() const { return m_webdav->savedHost(); }
 QString ApplicationUI::webdavSavedPort() const { return m_webdav->savedPort(); }
 QString ApplicationUI::webdavSavedUser() const { return m_webdav->savedUser(); }
+bool ApplicationUI::webdavSavedSecure() const { return m_webdav->savedSecure(); }
 
 void ApplicationUI::onSystemLanguageChanged()
 {

@@ -40,12 +40,13 @@ public:
 
     // --- Approach B: WebDAV (remote server mounted live, no local copy) ---
     Q_INVOKABLE QString registerWebdav(const QString &host, int port,
-                                       const QString &user, const QString &pass);
+                                       const QString &user, const QString &pass, bool secure);
     Q_INVOKABLE QString unregisterWebdav();
     Q_INVOKABLE bool webdavIsRegistered() const;
     Q_INVOKABLE QString webdavSavedHost() const;
     Q_INVOKABLE QString webdavSavedPort() const;
     Q_INVOKABLE QString webdavSavedUser() const;
+    Q_INVOKABLE bool webdavSavedSecure() const;
 
 private slots:
     void onSystemLanguageChanged();

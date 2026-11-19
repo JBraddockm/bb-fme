@@ -29,8 +29,8 @@ public:
     QString methodLabel() const;
     QString sourceName() const;
 
-    /*! The http://host:port URL shown in the UI for the mounted server. */
-    QString serverUrl(const QString &host, int port) const;
+    /*! The scheme://host:port URL shown in the UI for the mounted server. */
+    QString serverUrl(const QString &host, int port, bool secure) const;
 
     /*! True if the source currently exists (checked on app launch). */
     bool isRegistered() const;
@@ -39,11 +39,14 @@ public:
     QString savedHost() const;
     QString savedPort() const;
     QString savedUser() const;
+    bool savedSecure() const;
 
     /*! Register/update the WebDAV server (host, port, HTTP Basic credentials)
-     *  by merging it into the status PPS and poking the resmgr. */
+     *  by merging it into the status PPS and poking the resmgr. @p secure selects
+     *  https:// (TLS) instead of http://; the device must trust the server's
+     *  certificate (a self-signed cert can be imported via Settings). */
     QString registerSource(const QString &host, int port,
-                           const QString &user, const QString &pass);
+                           const QString &user, const QString &pass, bool secure);
 
     QString unregisterSource();
 };

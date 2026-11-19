@@ -120,6 +120,17 @@ provider takes over the live mount (populating `$APP/fs/mounts/BB-FME-DAV`) when
 rm -f /accounts/1000/shared/BB-FME-DAV /pps/system/filesystem/remote/BB-FME-DAV
 ```
 
+### HTTPS (TLS)
+
+Toggle **Use HTTPS (TLS)** to register the server over `https://`: the app writes an `https://`
+`server_addr` and control `url`, and `port` is the TLS port (e.g. `8443`). Two conditions apply:
+
+- **TLS 1.3 servers** are reachable only with a patched libcurl/OpenSSL on the device — stock
+  BlackBerry 10 negotiates older TLS and fails the handshake. That drop-in is a separate project.
+- **A self-signed certificate** (typical for a local server) must be trusted first: import it on the
+  device via Settings → Security and Privacy → Certificates. Otherwise the handshake is rejected and
+  the source shows empty.
+
 Code: `src/WebDavProvider.cpp`.
 
 ## Test servers on the host

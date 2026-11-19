@@ -97,9 +97,12 @@ QString WebDavProvider::methodId() const    { return QString::fromLatin1("webdav
 QString WebDavProvider::methodLabel() const { return QString::fromLatin1("WebDAV"); }
 QString WebDavProvider::sourceName() const  { return name(); }
 
-QString WebDavProvider::serverUrl(const QString &host, int port) const
+QString WebDavProvider::serverUrl(const QString &host, int port, bool secure) const
 {
-    return QString::fromLatin1("http://%1:%2").arg(host).arg(port);
+    return QString::fromLatin1("%1://%2:%3")
+        .arg(QString::fromLatin1(secure ? "https" : "http"))
+        .arg(host)
+        .arg(port);
 }
 
 bool WebDavProvider::isRegistered() const
@@ -130,10 +133,17 @@ QString WebDavProvider::savedUser() const
     return QSettings(QString::fromLatin1(kOrg), QString::fromLatin1(kApp)).value("webdav/user").toString();
 }
 
+bool WebDavProvider::savedSecure() const
+{
+    return QSettings(QString::fromLatin1(kOrg), QString::fromLatin1(kApp))
+        .value("webdav/secure", false).toBool();
+}
+
 QString WebDavProvider::registerSource(const QString &host, int port,
-                                       const QString &user, const QString &pass)
+                                       const QString &user, const QString &pass, bool secure)
 {
     QStringList log;
+    const QString scheme = QString::fromLatin1(secure ? "https" : "http");
 
     // Remember the parameters so the Registered card can be restored on relaunch.
     {
@@ -141,13 +151,14 @@ QString WebDavProvider::registerSource(const QString &host, int port,
         s.setValue("webdav/host", host);
         s.setValue("webdav/port", port);
         s.setValue("webdav/user", user);
+        s.setValue("webdav/secure", secure);
     }
 
     // 1. Merge our entry into the existing servers list (preserve the others).
     QVariantList servers = without(readServers(), name());
     QVariantMap me;
     me["server_name"] = name();
-    me["server_addr"] = QString::fromLatin1("http://") + host;  // host-only; port is separate
+    me["server_addr"] = scheme + QString::fromLatin1("://") + host;  // host-only; port is separate
     me["username"] = user;
     me["password"] = pass;
     me["port"] = port;
@@ -195,12 +206,13 @@ QString WebDavProvider::registerSource(const QString &host, int port,
     QString poke =
         QString::fromLatin1(
             "echo 'name::%1' >> %2\n"
-            "echo 'url::http://%3' >> %2\n"
-            "echo 'username::%4' >> %2\n"
-            "echo 'password::%5' >> %2\n"
-            "echo 'port:n:%6' >> %2\n")
+            "echo 'url::%3://%4' >> %2\n"
+            "echo 'username::%5' >> %2\n"
+            "echo 'password::%6' >> %2\n"
+            "echo 'port:n:%7' >> %2\n")
             .arg(name())
             .arg(QString::fromLatin1(kControl))
+            .arg(scheme)
             .arg(host)
             .arg(user)
             .arg(pass)
